@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivery — Variante B (A/B)</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles-ab-b.css" />
+    <!-- INSERTAR SCRIPT DE CLARITY AQUÍ -->
+     <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w2ljtxjoqx");
+</script>
+    <!-- Variante B: cabecera clara, acento rojo, grillas 2 cols en locales -->
+  </head>
+  <body data-ab-variant="b">
+    <header class="header">
+      <div class="header-top">
+        <img
+          src="./assets/logo-delivery-b.svg"
+          width="44"
+          height="44"
+          alt=""
+          class="header-logo"
+        />
+        <h1>RushEats</h1>
+      </div>
+      <!-- Flujo confuso: “Restaurantes” y “Categorías” parecen lo mismo pero son pasos distintos -->
+      <div class="steps" aria-label="Pasos">
+        <span class="step active" data-step-indicator="1">
+          <img
+            src="./assets/ico-ubicacion.svg"
+            width="14"
+            height="14"
+            alt=""
+            class="step-ico"
+          />
+          Elegí local
+        </span>
+        <span class="step" data-step-indicator="2">
+          <img
+            src="./assets/ico-menu.svg"
+            width="14"
+            height="14"
+            alt=""
+            class="step-ico"
+          />
+          Tu menú
+        </span>
+        <span class="step subtle-step" data-step-indicator="3">
+          <img
+            src="./assets/ico-lista.svg"
+            width="14"
+            height="14"
+            alt=""
+            class="step-ico"
+          />
+          Revisar
+        </span>
+      </div>
+    </header>
+
+    <main class="main">
+      <!-- Paso 1: elegir restaurante (y filtro por categoría poco claro) -->
+      <section id="step-restaurante" class="panel active">
+        <h2>Locales cerca tuyo</h2>
+        <p class="muted">
+          Elegí un restaurante. El filtro de categoría solo ordena la lista.
+        </p>
+        <div class="filtros">
+          <label class="sr-only" for="filtro-cat">Categoría</label>
+          <select id="filtro-cat" aria-label="Filtrar por tipo de comida">
+            <option value="todas">Todas</option>
+            <option value="pizza">Pizza</option>
+            <option value="asiatica">Asiática</option>
+            <option value="hamburguesas">Hamburguesas</option>
+          </select>
+        </div>
+        <ul id="lista-restaurantes" class="lista-cards"></ul>
+      </section>
+
+      <!-- Paso 2: productos del restaurante elegido -->
+      <section id="step-productos" class="panel" hidden>
+        <button type="button" class="link-back confusing" id="btn-volver-rest">
+          &larr; Cambiar sitio
+        </button>
+        <h2 id="titulo-restaurante">Menú</h2>
+        <ul id="lista-platos" class="lista-platos"></ul>
+        <div class="sticky-cta">
+          <!-- Botón resumen poco visible -->
+          <button type="button" id="btn-carrito" class="btn btn-faint">
+            Ver resumen del pedido
+          </button>
+        </div>
+      </section>
+
+      <!-- Paso 3: resumen -->
+      <section id="step-resumen" class="panel" hidden>
+        <h2>Resumen</h2>
+        <p class="muted">
+          Confirmá el total. Para sumar platos, volvé al menú con el botón de abajo.
+        </p>
+        <ul id="lista-resumen" class="lista-resumen"></ul>
+        <p id="resumen-vacio" class="muted">Nada seleccionado.</p>
+        <p class="total-line">
+          Total estimado: <strong id="total-delivery">0,00 €</strong>
+        </p>
+        <div class="actions">
+          <button
+            type="button"
+            class="btn btn-ghost-small"
+            id="btn-seguir-comprando"
+          >
+            Agregar más
+          </button>
+          <button type="button" id="btn-comprar" class="btn btn-primary">
+            <img
+              src="./assets/ico-pedido.svg"
+              width="18"
+              height="18"
+              alt=""
+              class="btn-ico-inline"
+            />
+            Pedir ahora
+          </button>
+        </div>
+      </section>
+
+      <!-- Confirmación -->
+      <section id="step-confirmacion" class="panel panel-center" hidden>
+        <h2>Pedido enviado</h2>
+        <p id="msg-confirm">En breve recibirá el tiempo estimado.</p>
+        <button type="button" class="btn btn-primary" id="btn-nuevo">
+          Nuevo pedido
+        </button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <small>RushEats — variante B (A/B)</small>
+    </footer>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
