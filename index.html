@@ -60,11 +60,18 @@
       box-shadow: var(--sh-sm);
     }
     .header-inner {
-      max-width: 640px; margin: 0 auto;
-      padding: .75rem 1rem;
+      max-width: 860px; margin: 0 auto;
+      padding: .75rem 1.25rem;
       display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     }
-    .brand { display: flex; align-items: center; gap: .5rem; }
+    .brand {
+      display: flex; align-items: center; gap: .5rem;
+      background: none; border: none; padding: 0; cursor: pointer;
+      border-radius: var(--r-sm);
+      transition: opacity .15s;
+    }
+    .brand:hover { opacity: .8; }
+    .brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .brand-icon {
       width: 36px; height: 36px;
       background: var(--accent); border-radius: var(--r-sm);
@@ -106,8 +113,8 @@
 
     /* ── STEPS ── */
     .steps-bar {
-      max-width: 640px; margin: 0 auto;
-      padding: .6rem 1rem;
+      max-width: 860px; margin: 0 auto;
+      padding: .5rem 1.25rem;
       display: flex; align-items: center;
     }
     .step-item {
@@ -141,8 +148,8 @@
 
     /* ── MAIN ── */
     .main {
-      flex: 1; max-width: 640px; margin: 0 auto; width: 100%;
-      padding: 1.25rem 1rem 2rem;
+      flex: 1; max-width: 860px; margin: 0 auto; width: 100%;
+      padding: 1.25rem 1.25rem 2rem;
     }
     .panel { display: none; }
     .panel.active { display: block; animation: fadeUp .22s ease both; }
@@ -170,7 +177,7 @@
 
     /* ── GRID RESTAURANTES ── */
     .grid-rest {
-      display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .75rem;
     }
     @media (max-width: 380px) { .grid-rest { grid-template-columns: 1fr; } }
     .card-rest {
@@ -211,7 +218,8 @@
       font-size: 1.4rem; font-weight: 800;
       letter-spacing: -.03em; margin-bottom: 1rem;
     }
-    .menu-list { display: flex; flex-direction: column; gap: .65rem; padding: 0; }
+    .menu-list { display: grid; grid-template-columns: 1fr; gap: .65rem; padding: 0; }
+    @media (min-width: 600px) { .menu-list { grid-template-columns: 1fr 1fr; } }
     .plato-card {
       background: var(--card); border: 1.5px solid var(--border);
       border-radius: var(--r-md); padding: .75rem;
@@ -311,6 +319,7 @@
     }
     .field-input::placeholder { color: var(--text-3); }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    @media (min-width: 600px) { .pay-opts { grid-template-columns: repeat(4,1fr); } }
     .pay-opts { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
     .pay-opt {
       border: 1.5px solid var(--border); border-radius: var(--r-sm);
@@ -393,13 +402,52 @@
       overflow: hidden; clip: rect(0,0,0,0); border: 0;
     }
     .mt-2 { margin-top: 1.25rem; }
+
+    /* ── STICKY BOTTOM BAR ── */
+    .sticky-bar-wrap {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 90;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -4px 20px rgba(0,0,0,.10);
+      display: none;
+      transform: translateY(100%);
+      transition: transform .25s cubic-bezier(.32,.72,0,1);
+    }
+    .sticky-bar-wrap.visible {
+      display: block;
+      transform: translateY(0);
+    }
+    .sticky-bar-inner {
+      max-width: 860px; margin: 0 auto;
+      padding: .75rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+    }
+    .sticky-bar-info { display: flex; flex-direction: column; }
+    .sticky-bar-label { font-size: .72rem; color: var(--text-3); font-weight: 500; }
+    .sticky-bar-total { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; }
+    .sticky-bar-btn {
+      flex-shrink: 0;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--r-md);
+      padding: .7rem 1.3rem;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600;
+      display: flex; align-items: center; gap: .4rem;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(232,67,26,.3);
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .sticky-bar-btn:hover { background: var(--accent-dk); }
+    .sticky-bar-btn:active { transform: scale(.97); }
+    body.has-sticky-bar { padding-bottom: 5rem; }
   </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-inner">
-    <div class="brand">
+    <button class="brand" id="btn-logo-home" aria-label="Volver al inicio" title="Volver al inicio">
       <div class="brand-icon">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
@@ -407,7 +455,7 @@
         </svg>
       </div>
       <h1>BenjaEats</h1>
-    </div>
+    </button>
     <button class="cart-pill" id="btn-abrir-carrito" data-empty="true" aria-label="Ver carrito">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
@@ -554,6 +602,20 @@
   </div>
 </div>
 
+<!-- BARRA STICKY INFERIOR -->
+<div class="sticky-bar-wrap" id="sticky-bar">
+  <div class="sticky-bar-inner">
+    <div class="sticky-bar-info">
+      <span class="sticky-bar-label">Tu pedido</span>
+      <span class="sticky-bar-total" id="sticky-bar-total">$0,00</span>
+    </div>
+    <button type="button" class="sticky-bar-btn" id="btn-sticky-checkout">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Ir a pagar
+    </button>
+  </div>
+</div>
+
 <footer class="footer">BenjaEats · Prototipo mejorado UX</footer>
 
 <script>
@@ -586,6 +648,7 @@
   var cartLines=id('cart-lines'), cartEmpty=id('cart-empty'), cartTotal=id('cart-total');
   var pillTotal=id('pill-total'), pillCount=id('pill-count'), pillBtn=id('btn-abrir-carrito');
   var btnIrCk=id('btn-ir-checkout');
+  var stickyBar=id('sticky-bar'), stickyBarTotal=id('sticky-bar-total');
   var osmLines=id('osm-lines'), osmTotal=id('osm-total'), msgConf=id('msg-confirm');
 
   function id(x){return document.getElementById(x);}
@@ -614,9 +677,16 @@
     if(panel===sMenu) setStep(2);
     if(panel===sCheck||panel===sConf) setStep(3);
     window.scrollTo({top:0,behavior:'smooth'});
+    refreshStickyBar();
   }
 
-  // Pill
+  // Pill + Sticky bar
+  function refreshStickyBar(){
+    var c=items(), t=total(), onMenu=(sMenu.classList.contains('active'));
+    stickyBarTotal.textContent=fmt(t);
+    if(c>0&&onMenu){ stickyBar.classList.add('visible'); document.body.classList.add('has-sticky-bar'); }
+    else { stickyBar.classList.remove('visible'); document.body.classList.remove('has-sticky-bar'); }
+  }
   function refreshPill(){
     var c=items(), t=total();
     pillCount.textContent=c; pillTotal.textContent=fmt(t);
@@ -625,6 +695,7 @@
     pillCount.classList.remove('bump');
     void pillCount.offsetWidth;
     if(c>0) pillCount.classList.add('bump');
+    refreshStickyBar();
   }
 
   // Restaurantes
@@ -778,6 +849,21 @@
     restActual=null;
     ['f-nombre','f-tel','f-email','f-dir','f-piso','f-nota'].forEach(function(x){id(x).value='';});
     show(sRest);
+  });
+
+  // Sticky bar button
+  id('btn-sticky-checkout').addEventListener('click',function(){
+    if(!pedido.length)return;
+    renderCheckout(); show(sCheck);
+  });
+
+  // Logo = botón home
+  id('btn-logo-home').addEventListener('click', function(){
+    pedido = []; refreshPill(); show(sRest);
+    // reset filtro chips
+    document.querySelectorAll('[data-cat]').forEach(function(c){ c.classList.remove('active'); });
+    document.querySelector('[data-cat="todas"]').classList.add('active');
+    renderRests('todas');
   });
 
   // Init
