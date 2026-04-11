@@ -1,148 +1,782 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Delivery — Variante B (A/B)</title>
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./styles-ab-b.css" />
-    <!-- INSERTAR SCRIPT DE CLARITY AQUÍ -->
-     <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "w2ljtxjoqx");
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BenjaEats — Pedí tu comida</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --bg:        #F7F4EF;
+      --card:      #FFFFFF;
+      --surface:   #EFECE7;
+      --accent:    #E8431A;
+      --accent-dk: #C4340E;
+      --accent-lt: #FDE8E3;
+      --text:      #1A1612;
+      --text-2:    #5C5650;
+      --text-3:    #9E9890;
+      --border:    #E3DED7;
+      --green:     #1B8A5A;
+      --r-sm: 10px;
+      --r-md: 16px;
+      --r-lg: 24px;
+      --sh-sm: 0 1px 4px rgba(0,0,0,.07);
+      --sh-md: 0 4px 16px rgba(0,0,0,.10);
+      --sh-lg: 0 8px 32px rgba(0,0,0,.14);
+      font-size: 16px;
+    }
+ 
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; }
+    button { font-family: 'DM Sans', sans-serif; cursor: pointer; }
+    ul { list-style: none; }
+ 
+    /* ── HEADER ── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--sh-sm);
+    }
+    .header-inner {
+      max-width: 640px; margin: 0 auto;
+      padding: .75rem 1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .brand { display: flex; align-items: center; gap: .5rem; }
+    .brand-icon {
+      width: 36px; height: 36px;
+      background: var(--accent); border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .brand h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      color: var(--text); letter-spacing: -.03em;
+    }
+ 
+    .cart-pill {
+      display: flex; align-items: center; gap: .4rem;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 999px;
+      padding: .45rem .85rem .45rem .6rem;
+      font-size: .85rem; font-weight: 600;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .cart-pill:hover { background: var(--accent-dk); }
+    .cart-pill:active { transform: scale(.97); }
+    .cart-pill[data-empty="true"] {
+      background: var(--surface); color: var(--text-2); pointer-events: none;
+    }
+    .cart-pill[data-empty="true"] .cpc { background: var(--border); color: var(--text-3); }
+    .cpc {
+      background: #fff; color: var(--accent);
+      border-radius: 999px; min-width: 20px; height: 20px;
+      font-size: .75rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; padding: 0 .35rem;
+    }
+    .cpc.bump { animation: bump .25s ease; }
+    @keyframes bump {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.4); }
+      100% { transform: scale(1); }
+    }
+ 
+    /* ── STEPS ── */
+    .steps-bar {
+      max-width: 640px; margin: 0 auto;
+      padding: .6rem 1rem;
+      display: flex; align-items: center;
+    }
+    .step-item {
+      display: flex; align-items: center; gap: .35rem;
+      font-size: .78rem; font-weight: 500;
+      color: var(--text-3); transition: color .2s; flex-shrink: 0;
+    }
+    .step-item.active { color: var(--accent); }
+    .step-item.done   { color: var(--green); }
+    .step-dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid currentColor;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .7rem; font-weight: 700;
+      transition: background .2s, border-color .2s; flex-shrink: 0;
+    }
+    .step-item.active .step-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step-item.done   .step-dot { background: var(--green);  border-color: var(--green);  color: #fff; }
+    .step-conn {
+      flex: 1; height: 2px; background: var(--border);
+      margin: 0 .35rem; border-radius: 1px;
+      position: relative; overflow: hidden;
+    }
+    .step-conn-fill {
+      position: absolute; inset: 0;
+      background: var(--green);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform .4s ease;
+    }
+    .step-conn.done .step-conn-fill { transform: scaleX(1); }
+ 
+    /* ── MAIN ── */
+    .main {
+      flex: 1; max-width: 640px; margin: 0 auto; width: 100%;
+      padding: 1.25rem 1rem 2rem;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeUp .22s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem; font-weight: 800;
+      letter-spacing: -.03em; margin-bottom: .25rem;
+    }
+    .section-sub { font-size: .875rem; color: var(--text-2); margin-bottom: 1.25rem; }
+ 
+    /* ── CHIPS ── */
+    .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .chip {
+      padding: .35rem .85rem; border-radius: 999px;
+      border: 1.5px solid var(--border); background: var(--card);
+      font: inherit; font-size: .8rem; font-weight: 500;
+      color: var(--text-2); cursor: pointer; transition: all .15s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+ 
+    /* ── GRID RESTAURANTES ── */
+    .grid-rest {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+    }
+    @media (max-width: 380px) { .grid-rest { grid-template-columns: 1fr; } }
+    .card-rest {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: var(--r-md); overflow: hidden;
+      cursor: pointer; text-align: left; font: inherit; width: 100%;
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+      display: flex; flex-direction: column; padding: 0;
+    }
+    .card-rest:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(232,67,26,.15);
+      transform: translateY(-2px);
+    }
+    .card-rest:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .cr-img {
+      width: 100%; height: 96px; background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cr-body { padding: .65rem .75rem .75rem; }
+    .cr-name { font-weight: 600; font-size: .9rem; margin-bottom: .15rem; display: block; }
+    .cr-tag  { font-size: .72rem; color: var(--text-3); text-transform: capitalize; }
+    .cr-time {
+      font-size: .72rem; color: var(--text-2);
+      margin-top: .3rem; display: flex; align-items: center; gap: .2rem;
+    }
+ 
+    /* ── MENÚ ── */
+    .back-btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      border: none; background: none; color: var(--text-2);
+      font: inherit; font-size: .85rem; font-weight: 500;
+      padding: 0; margin-bottom: 1rem; cursor: pointer; transition: color .15s;
+    }
+    .back-btn:hover { color: var(--accent); }
+    .menu-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 800;
+      letter-spacing: -.03em; margin-bottom: 1rem;
+    }
+    .menu-list { display: flex; flex-direction: column; gap: .65rem; padding: 0; }
+    .plato-card {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: var(--r-md); padding: .75rem;
+      display: flex; align-items: center; gap: .75rem;
+      transition: border-color .15s;
+    }
+    .plato-img {
+      width: 64px; height: 64px; border-radius: var(--r-sm);
+      background: var(--surface); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .plato-info { flex: 1; min-width: 0; }
+    .plato-nombre { font-weight: 600; font-size: .9rem; margin-bottom: .15rem; display: block; }
+    .plato-precio { font-size: .85rem; font-weight: 700; color: var(--accent); }
+    .qty-ctrl { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+    .qty-btn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: var(--card);
+      font-size: 1.1rem; font-weight: 700; color: var(--text-2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .15s; line-height: 1;
+    }
+    .qty-btn.add { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .qty-btn:hover { filter: brightness(.9); }
+    .qty-num { font-size: .9rem; font-weight: 700; min-width: 20px; text-align: center; }
+ 
+    /* ── CART DRAWER ── */
+    .cart-overlay {
+      position: fixed; inset: 0;
+      background: rgba(26,22,18,.45); z-index: 200;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-drawer {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      max-width: 640px; margin: 0 auto;
+      background: var(--card);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+      box-shadow: var(--sh-lg); z-index: 201;
+      transform: translateY(110%);
+      transition: transform .3s cubic-bezier(.32,.72,0,1);
+      max-height: 85dvh; display: flex; flex-direction: column;
+    }
+    .cart-drawer.open { transform: translateY(0); }
+    .cart-handle {
+      width: 40px; height: 4px; background: var(--border);
+      border-radius: 2px; margin: .75rem auto .5rem; flex-shrink: 0;
+    }
+    .cart-hdr {
+      padding: .25rem 1.25rem .75rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .cart-hdr-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; }
+    .cart-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: var(--surface);
+      font-size: 1rem; color: var(--text-2);
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .cart-body { flex: 1; overflow-y: auto; padding: .75rem 1.25rem; }
+    .cart-empty { text-align: center; padding: 2rem 0; color: var(--text-3); font-size: .9rem; }
+    .cart-line {
+      display: flex; align-items: center; gap: .65rem;
+      padding: .6rem 0; border-bottom: 1px solid var(--border);
+    }
+    .cart-line:last-child { border-bottom: none; }
+    .cart-line-info { flex: 1; min-width: 0; }
+    .cart-line-name { font-size: .88rem; font-weight: 600; display: block; }
+    .cart-line-price { font-size: .8rem; color: var(--text-2); }
+    .cart-ftr {
+      padding: .75rem 1.25rem 1.25rem; border-top: 1px solid var(--border); flex-shrink: 0;
+    }
+    .cart-total-row {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+    }
+    .cart-total-lbl { font-size: .9rem; color: var(--text-2); }
+    .cart-total-amt {
+      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+    }
+ 
+    /* ── CHECKOUT ── */
+    .form-section { display: flex; flex-direction: column; gap: 1rem; }
+    .field-group { display: flex; flex-direction: column; gap: .35rem; }
+    .field-label {
+      font-size: .78rem; font-weight: 600; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .field-input {
+      padding: .75rem .9rem; border: 1.5px solid var(--border);
+      border-radius: var(--r-sm); font: inherit; font-size: .9rem;
+      background: var(--card); color: var(--text);
+      transition: border-color .15s, box-shadow .15s; width: 100%;
+    }
+    .field-input:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,67,26,.12);
+    }
+    .field-input::placeholder { color: var(--text-3); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .pay-opts { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    .pay-opt {
+      border: 1.5px solid var(--border); border-radius: var(--r-sm);
+      padding: .6rem .75rem; display: flex; align-items: center; gap: .45rem;
+      cursor: pointer; font: inherit; font-size: .82rem; font-weight: 500;
+      background: var(--card); color: var(--text-2); transition: all .15s;
+    }
+    .pay-opt:hover { border-color: var(--accent); color: var(--accent); }
+    .pay-opt.active { border-color: var(--accent); background: var(--accent-lt); color: var(--accent); font-weight: 600; }
+ 
+    .osm {
+      background: var(--surface); border-radius: var(--r-md);
+      padding: 1rem; margin-bottom: 1.25rem;
+    }
+    .osm-ttl {
+      font-size: .75rem; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--text-3); margin-bottom: .75rem;
+    }
+    .osm-line { display: flex; justify-content: space-between; font-size: .85rem; padding: .2rem 0; }
+    .osm-total {
+      display: flex; justify-content: space-between;
+      font-weight: 700; font-size: .95rem;
+      border-top: 1px solid var(--border);
+      padding-top: .65rem; margin-top: .5rem;
+    }
+ 
+    /* ── CONFIRMACIÓN ── */
+    .confirm-wrap { text-align: center; padding: 2.5rem 1rem; }
+    .confirm-ico {
+      width: 72px; height: 72px;
+      background: #E6F7EF; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .confirm-wrap h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 800; letter-spacing: -.03em; margin-bottom: .5rem;
+    }
+    .confirm-wrap p {
+      color: var(--text-2); font-size: .9rem; margin-bottom: 1.5rem;
+      max-width: 300px; margin-left: auto; margin-right: auto;
+    }
+    .eta-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: .45rem 1rem;
+      font-size: .85rem; font-weight: 600; margin-bottom: 1.5rem;
+    }
+ 
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 600;
+      border: none; cursor: pointer;
+      transition: background .15s, transform .1s; text-align: center;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      padding: .75rem 1.4rem; font-size: .95rem;
+      width: 100%; border-radius: var(--r-md);
+      box-shadow: 0 4px 16px rgba(232,67,26,.28);
+    }
+    .btn-primary:hover { background: var(--accent-dk); }
+    .btn-primary:disabled { background: var(--border); color: var(--text-3); box-shadow: none; cursor: not-allowed; }
+    .btn-outline {
+      background: transparent; color: var(--text-2);
+      border: 1.5px solid var(--border);
+      padding: .65rem 1rem; font-size: .85rem; border-radius: var(--r-md);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+ 
+    .footer {
+      text-align: center; padding: 1rem;
+      font-size: .72rem; color: var(--text-3);
+      border-top: 1px solid var(--border);
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); border: 0;
+    }
+    .mt-2 { margin-top: 1.25rem; }
+  </style>
+</head>
+<body>
+ 
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+          <line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+        </svg>
+      </div>
+      <h1>BenjaEats</h1>
+    </div>
+    <button class="cart-pill" id="btn-abrir-carrito" data-empty="true" aria-label="Ver carrito">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <span id="pill-total">$0,00</span>
+      <span class="cpc" id="pill-count">0</span>
+    </button>
+  </div>
+  <div class="steps-bar" aria-label="Pasos">
+    <div class="step-item active" data-step="1"><div class="step-dot">1</div><span>Restaurante</span></div>
+    <div class="step-conn" data-conn="1"><div class="step-conn-fill"></div></div>
+    <div class="step-item" data-step="2"><div class="step-dot">2</div><span>Menú</span></div>
+    <div class="step-conn" data-conn="2"><div class="step-conn-fill"></div></div>
+    <div class="step-item" data-step="3"><div class="step-dot">3</div><span>Confirmar</span></div>
+  </div>
+</header>
+ 
+<main class="main">
+ 
+  <!-- PASO 1 -->
+  <section id="step-rest" class="panel active">
+    <h2 class="section-title">¿Qué se te antoja?</h2>
+    <p class="section-sub">Elegí un restaurante cerca tuyo.</p>
+    <div class="filter-chips" id="filter-chips">
+      <button class="chip active" data-cat="todas">Todos</button>
+      <button class="chip" data-cat="pizza">🍕 Pizza</button>
+      <button class="chip" data-cat="asiatica">🍜 Asiática</button>
+      <button class="chip" data-cat="hamburguesas">🍔 Hamburguesas</button>
+    </div>
+    <ul class="grid-rest" id="lista-rest"></ul>
+  </section>
+ 
+  <!-- PASO 2 -->
+  <section id="step-menu" class="panel" hidden>
+    <button class="back-btn" id="btn-volver-rest">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Cambiar restaurante
+    </button>
+    <h2 class="menu-title" id="titulo-rest">Menú</h2>
+    <ul class="menu-list" id="lista-platos"></ul>
+  </section>
+ 
+  <!-- PASO 3 -->
+  <section id="step-checkout" class="panel" hidden>
+    <button class="back-btn" id="btn-volver-menu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al menú
+    </button>
+    <h2 class="section-title">Confirmá tu pedido</h2>
+ 
+    <div class="osm" id="osm-wrap">
+      <p class="osm-ttl">Tu pedido</p>
+      <ul id="osm-lines"></ul>
+      <div class="osm-total"><span>Total</span><span id="osm-total">$0,00</span></div>
+    </div>
+ 
+    <div class="form-section">
+      <div class="field-group">
+        <label class="field-label" for="f-nombre">Nombre y apellido</label>
+        <input class="field-input" id="f-nombre" type="text" placeholder="Tu nombre completo" autocomplete="name" />
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <label class="field-label" for="f-tel">Teléfono</label>
+          <input class="field-input" id="f-tel" type="tel" placeholder="11 1234-5678" autocomplete="tel" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="f-email">Email</label>
+          <input class="field-input" id="f-email" type="email" placeholder="tu@email.com" autocomplete="email" />
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="f-dir">Dirección de entrega</label>
+        <input class="field-input" id="f-dir" type="text" placeholder="Calle y número" autocomplete="street-address" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="f-piso">Piso / Depto (opcional)</label>
+        <input class="field-input" id="f-piso" type="text" placeholder="Ej: 3° B" />
+      </div>
+      <div class="field-group">
+        <p class="field-label" id="pay-lbl">Método de pago</p>
+        <div class="pay-opts" role="group" aria-labelledby="pay-lbl">
+          <button type="button" class="pay-opt active" data-pay="efectivo">💵 Efectivo</button>
+          <button type="button" class="pay-opt" data-pay="tarjeta">💳 Tarjeta</button>
+          <button type="button" class="pay-opt" data-pay="transferencia">🔄 Transferencia</button>
+          <button type="button" class="pay-opt" data-pay="mp">📱 Mercado Pago</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="f-nota">Nota para el restaurante (opcional)</label>
+        <input class="field-input" id="f-nota" type="text" placeholder="Sin cebolla, extra salsa…" />
+      </div>
+    </div>
+    <div class="mt-2">
+      <button type="button" class="btn btn-primary" id="btn-comprar">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirmar pedido
+      </button>
+    </div>
+  </section>
+ 
+  <!-- CONFIRMACIÓN -->
+  <section id="step-conf" class="panel" hidden>
+    <div class="confirm-wrap">
+      <div class="confirm-ico">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1B8A5A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2>¡Pedido enviado!</h2>
+      <p id="msg-confirm">Tu pedido está en preparación.</p>
+      <div class="eta-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Tiempo estimado: 30-40 min
+      </div>
+      <br>
+      <button type="button" class="btn btn-primary" id="btn-nuevo" style="max-width:240px;margin:0 auto;">
+        Hacer nuevo pedido
+      </button>
+    </div>
+  </section>
+ 
+</main>
+ 
+<!-- CARRITO DRAWER -->
+<div class="cart-overlay" id="cart-overlay"></div>
+<div class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Carrito" aria-modal="true">
+  <div class="cart-handle"></div>
+  <div class="cart-hdr">
+    <span class="cart-hdr-title">Tu pedido</span>
+    <button class="cart-close" id="btn-cerrar-carrito" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="cart-body">
+    <p class="cart-empty" id="cart-empty">Todavía no agregaste nada.</p>
+    <ul id="cart-lines"></ul>
+  </div>
+  <div class="cart-ftr">
+    <div class="cart-total-row">
+      <span class="cart-total-lbl">Total estimado</span>
+      <span class="cart-total-amt" id="cart-total">$0,00</span>
+    </div>
+    <button type="button" class="btn btn-primary" id="btn-ir-checkout">
+      Continuar con el pedido
+    </button>
+  </div>
+</div>
+ 
+<footer class="footer">BenjaEats · Prototipo mejorado UX</footer>
+ 
+<script>
+(function(){
+  'use strict';
+ 
+  var RESTS = [
+    {id:'r1',nombre:'Pizzería Napoli',   cat:'pizza',        emoji:'🍕', tiempo:'25-35 min'},
+    {id:'r2',nombre:'Sushi Roll',        cat:'asiatica',     emoji:'🍣', tiempo:'30-45 min'},
+    {id:'r3',nombre:'Burger Norte',      cat:'hamburguesas', emoji:'🍔', tiempo:'20-30 min'},
+    {id:'r4',nombre:'Mamma Mia Express', cat:'pizza',        emoji:'🍕', tiempo:'35-50 min'}
+  ];
+  var MENU = {
+    r1:[{id:'m1',nombre:'Margherita',       precio:8.5, emoji:'🍕'},
+        {id:'m2',nombre:'Cuatro Quesos',    precio:10.9,emoji:'🧀'}],
+    r2:[{id:'m3',nombre:'Maki Mix (12 pzs)',precio:14.0,emoji:'🍣'},
+        {id:'m4',nombre:'Yakisoba',         precio:9.5, emoji:'🍜'}],
+    r3:[{id:'m5',nombre:'Clásica + Papas',  precio:11.0,emoji:'🍔'},
+        {id:'m6',nombre:'Veggie Burger',    precio:10.5,emoji:'🥦'}],
+    r4:[{id:'m7',nombre:'Calzone',          precio:9.0, emoji:'🥐'},
+        {id:'m8',nombre:'Prosciutto',       precio:11.5,emoji:'🍕'}]
+  };
+ 
+  var restActual = null, pedido = [], pagoActual = 'efectivo';
+ 
+  // DOM
+  var sRest=id('step-rest'), sMenu=id('step-menu'), sCheck=id('step-checkout'), sConf=id('step-conf');
+  var listRest=id('lista-rest'), listPlatos=id('lista-platos'), titRest=id('titulo-rest');
+  var overlay=id('cart-overlay'), drawer=id('cart-drawer');
+  var cartLines=id('cart-lines'), cartEmpty=id('cart-empty'), cartTotal=id('cart-total');
+  var pillTotal=id('pill-total'), pillCount=id('pill-count'), pillBtn=id('btn-abrir-carrito');
+  var btnIrCk=id('btn-ir-checkout');
+  var osmLines=id('osm-lines'), osmTotal=id('osm-total'), msgConf=id('msg-confirm');
+ 
+  function id(x){return document.getElementById(x);}
+  function fmt(n){return '$'+Number(n).toFixed(2).replace('.',',');}
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+  function total(){return pedido.reduce(function(s,l){return s+l.precio*l.qty;},0);}
+  function items(){return pedido.reduce(function(s,l){return s+l.qty;},0);}
+  function find(pid){for(var i=0;i<pedido.length;i++)if(pedido[i].id===pid)return pedido[i];return null;}
+ 
+  // Steps
+  function setStep(n){
+    document.querySelectorAll('[data-step]').forEach(function(el){
+      var v=+el.getAttribute('data-step');
+      el.classList.toggle('active',v===n); el.classList.toggle('done',v<n);
+    });
+    document.querySelectorAll('[data-conn]').forEach(function(el){
+      el.classList.toggle('done',+el.getAttribute('data-conn')<n);
+    });
+  }
+ 
+  function show(panel){
+    [sRest,sMenu,sCheck,sConf].forEach(function(p){
+      var on=p===panel; p.classList.toggle('active',on); p.hidden=!on;
+    });
+    if(panel===sRest) setStep(1);
+    if(panel===sMenu) setStep(2);
+    if(panel===sCheck||panel===sConf) setStep(3);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+ 
+  // Pill
+  function refreshPill(){
+    var c=items(), t=total();
+    pillCount.textContent=c; pillTotal.textContent=fmt(t);
+    pillBtn.setAttribute('data-empty',c===0?'true':'false');
+    btnIrCk.disabled=(c===0);
+    pillCount.classList.remove('bump');
+    void pillCount.offsetWidth;
+    if(c>0) pillCount.classList.add('bump');
+  }
+ 
+  // Restaurantes
+  id('filter-chips').addEventListener('click',function(e){
+    var chip=e.target.closest('[data-cat]'); if(!chip)return;
+    document.querySelectorAll('[data-cat]').forEach(function(c){c.classList.remove('active');});
+    chip.classList.add('active');
+    renderRests(chip.getAttribute('data-cat'));
+  });
+ 
+  function renderRests(cat){
+    listRest.innerHTML='';
+    RESTS.forEach(function(r){
+      if(cat!=='todas'&&r.cat!==cat)return;
+      var li=document.createElement('li');
+      var btn=document.createElement('button');
+      btn.type='button'; btn.className='card-rest'; btn.setAttribute('data-rest',r.id);
+      btn.innerHTML=
+        '<div class="cr-img"><span style="font-size:3rem">'+r.emoji+'</span></div>'+
+        '<div class="cr-body">'+
+          '<span class="cr-name">'+esc(r.nombre)+'</span>'+
+          '<span class="cr-tag">'+esc(r.cat)+'</span>'+
+          '<div class="cr-time"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+esc(r.tiempo)+'</div>'+
+        '</div>';
+      li.appendChild(btn); listRest.appendChild(li);
+    });
+  }
+ 
+  listRest.addEventListener('click',function(e){
+    var b=e.target.closest('[data-rest]'); if(!b)return;
+    abrirMenu(b.getAttribute('data-rest'));
+  });
+ 
+  // Menú
+  function qtyCtrlHTML(pl){
+    var qty=find(pl.id)?find(pl.id).qty:0;
+    return '<div class="qty-ctrl" data-qc="'+pl.id+'">'+
+      (qty>0?'<button type="button" class="qty-btn" data-rm="'+pl.id+'" aria-label="Quitar">−</button><span class="qty-num">'+qty+'</span>':'')+
+      '<button type="button" class="qty-btn add" data-add="'+pl.id+'" data-n="'+esc(pl.nombre)+'" data-p="'+pl.precio+'" data-e="'+pl.emoji+'" aria-label="Agregar">+</button>'+
+    '</div>';
+  }
+ 
+  function abrirMenu(rid){
+    restActual=rid;
+    var r=RESTS.find(function(x){return x.id===rid;});
+    titRest.textContent=r?r.nombre:'Menú';
+    listPlatos.innerHTML='';
+    (MENU[rid]||[]).forEach(function(pl){
+      var li=document.createElement('li'); li.className='plato-card';
+      li.innerHTML=
+        '<div class="plato-img"><span style="font-size:2rem">'+pl.emoji+'</span></div>'+
+        '<div class="plato-info"><span class="plato-nombre">'+esc(pl.nombre)+'</span><span class="plato-precio">'+fmt(pl.precio)+'</span></div>'+
+        qtyCtrlHTML(pl);
+      listPlatos.appendChild(li);
+    });
+    show(sMenu);
+  }
+ 
+  function refreshMenuQtys(){
+    if(!restActual)return;
+    (MENU[restActual]||[]).forEach(function(pl){
+      var ctrl=listPlatos.querySelector('[data-qc="'+pl.id+'"]'); if(!ctrl)return;
+      ctrl.outerHTML=qtyCtrlHTML(pl);
+    });
+  }
+ 
+  listPlatos.addEventListener('click',function(e){
+    var ab=e.target.closest('[data-add]');
+    if(ab){
+      var l=find(ab.getAttribute('data-add'));
+      if(l){l.qty+=1;}
+      else{pedido.push({id:ab.getAttribute('data-add'),nombre:ab.getAttribute('data-n'),precio:+ab.getAttribute('data-p'),emoji:ab.getAttribute('data-e'),qty:1});}
+      refreshMenuQtys(); refreshPill(); renderCart(); return;
+    }
+    var rb=e.target.closest('[data-rm]');
+    if(rb){
+      var rid=rb.getAttribute('data-rm'), rl=find(rid);
+      if(rl){rl.qty-=1; if(rl.qty<=0)pedido=pedido.filter(function(x){return x.id!==rid;});}
+      refreshMenuQtys(); refreshPill(); renderCart();
+    }
+  });
+ 
+  // Cart drawer
+  function renderCart(){
+    cartLines.innerHTML='';
+    cartEmpty.hidden=pedido.length>0;
+    pedido.forEach(function(l){
+      var li=document.createElement('li'); li.className='cart-line';
+      li.innerHTML=
+        '<span style="font-size:1.5rem;flex-shrink:0">'+l.emoji+'</span>'+
+        '<div class="cart-line-info"><span class="cart-line-name">'+esc(l.nombre)+'</span><span class="cart-line-price">'+fmt(l.precio)+' c/u</span></div>'+
+        '<div class="qty-ctrl">'+
+          '<button type="button" class="qty-btn" data-crm="'+l.id+'" aria-label="Quitar">−</button>'+
+          '<span class="qty-num">'+l.qty+'</span>'+
+          '<button type="button" class="qty-btn add" data-cad="'+l.id+'" aria-label="Agregar">+</button>'+
+        '</div>';
+      cartLines.appendChild(li);
+    });
+    cartTotal.textContent=fmt(total());
+  }
+ 
+  cartLines.addEventListener('click',function(e){
+    var a=e.target.closest('[data-cad]'), r=e.target.closest('[data-crm]');
+    if(a){var l=find(a.getAttribute('data-cad'));if(l)l.qty+=1;}
+    if(r){var id2=r.getAttribute('data-crm'),l2=find(id2);if(l2){l2.qty-=1;if(l2.qty<=0)pedido=pedido.filter(function(x){return x.id!==id2;});}}
+    renderCart(); refreshPill(); refreshMenuQtys();
+  });
+ 
+  function openCart(){renderCart();overlay.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';}
+  function closeCart(){overlay.classList.remove('open');drawer.classList.remove('open');document.body.style.overflow='';}
+ 
+  pillBtn.addEventListener('click',openCart);
+  id('btn-cerrar-carrito').addEventListener('click',closeCart);
+  overlay.addEventListener('click',closeCart);
+ 
+  btnIrCk.addEventListener('click',function(){
+    if(!pedido.length)return;
+    closeCart(); renderCheckout(); show(sCheck);
+  });
+ 
+  // Checkout
+  function renderCheckout(){
+    osmLines.innerHTML='';
+    pedido.forEach(function(l){
+      var li=document.createElement('li'); li.className='osm-line';
+      li.innerHTML='<span>'+l.emoji+' '+esc(l.nombre)+' × '+l.qty+'</span><span>'+fmt(l.precio*l.qty)+'</span>';
+      osmLines.appendChild(li);
+    });
+    osmTotal.textContent=fmt(total());
+  }
+ 
+  document.querySelector('.pay-opts').addEventListener('click',function(e){
+    var b=e.target.closest('[data-pay]'); if(!b)return;
+    pagoActual=b.getAttribute('data-pay');
+    document.querySelectorAll('[data-pay]').forEach(function(x){x.classList.toggle('active',x===b);});
+  });
+ 
+  id('btn-volver-rest').addEventListener('click',function(){show(sRest);});
+  id('btn-volver-menu').addEventListener('click',function(){restActual?abrirMenu(restActual):show(sRest);});
+ 
+  id('btn-comprar').addEventListener('click',function(){
+    if(!pedido.length){alert('Agregá al menos un plato.');return;}
+    var nombre=id('f-nombre').value.trim(), dir=id('f-dir').value.trim();
+    if(!nombre||!dir){alert('Completá tu nombre y dirección.');return;}
+    var rn='';RESTS.forEach(function(r){if(r.id===restActual)rn=r.nombre;});
+    msgConf.textContent='¡Gracias, '+nombre+'! Tu pedido en '+rn+' por '+fmt(total())+' está en camino.';
+    pedido=[]; refreshPill(); show(sConf);
+  });
+ 
+  id('btn-nuevo').addEventListener('click',function(){
+    restActual=null;
+    ['f-nombre','f-tel','f-email','f-dir','f-piso','f-nota'].forEach(function(x){id(x).value='';});
+    show(sRest);
+  });
+ 
+  // Init
+  renderRests('todas');
+  refreshPill();
+})();
 </script>
-    <!-- Variante B: cabecera clara, acento rojo, grillas 2 cols en locales -->
-  </head>
-  <body data-ab-variant="b">
-    <header class="header">
-      <div class="header-top">
-        <img
-          src="./assets/logo-delivery-b.svg"
-          width="44"
-          height="44"
-          alt=""
-          class="header-logo"
-        />
-        <h1>BenjaEats</h1>
-      </div>
-      <!-- Flujo confuso: “Restaurantes” y “Categorías” parecen lo mismo pero son pasos distintos -->
-      <div class="steps" aria-label="Pasos">
-        <span class="step active" data-step-indicator="1">
-          <img
-            src="./assets/ico-ubicacion.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Elegí local
-        </span>
-        <span class="step" data-step-indicator="2">
-          <img
-            src="./assets/ico-menu.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Tu menú
-        </span>
-        <span class="step subtle-step" data-step-indicator="3">
-          <img
-            src="./assets/ico-lista.svg"
-            width="14"
-            height="14"
-            alt=""
-            class="step-ico"
-          />
-          Revisar
-        </span>
-      </div>
-    </header>
-
-    <main class="main">
-      <!-- Paso 1: elegir restaurante (y filtro por categoría poco claro) -->
-      <section id="step-restaurante" class="panel active">
-        <h2>Locales cerca tuyo</h2>
-        <p class="muted">
-          Elegí un restaurante. El filtro de categoría solo ordena la lista.
-        </p>
-        <div class="filtros">
-          <label class="sr-only" for="filtro-cat">Categoría</label>
-          <select id="filtro-cat" aria-label="Filtrar por tipo de comida">
-            <option value="todas">Todas</option>
-            <option value="pizza">Pizza</option>
-            <option value="asiatica">Asiática</option>
-            <option value="hamburguesas">Hamburguesas</option>
-          </select>
-        </div>
-        <ul id="lista-restaurantes" class="lista-cards"></ul>
-      </section>
-
-      <!-- Paso 2: productos del restaurante elegido -->
-      <section id="step-productos" class="panel" hidden>
-        <button type="button" class="link-back confusing" id="btn-volver-rest">
-          &larr; Cambiar sitio
-        </button>
-        <h2 id="titulo-restaurante">Menú</h2>
-        <ul id="lista-platos" class="lista-platos"></ul>
-        <div class="sticky-cta">
-          <!-- Botón resumen poco visible -->
-          <button type="button" id="btn-carrito" class="btn btn-faint">
-            Ver resumen del pedido
-          </button>
-        </div>
-      </section>
-
-      <!-- Paso 3: resumen -->
-      <section id="step-resumen" class="panel" hidden>
-        <h2>Resumen</h2>
-        <p class="muted">
-          Confirmá el total. Para sumar platos, volvé al menú con el botón de abajo.
-        </p>
-        <ul id="lista-resumen" class="lista-resumen"></ul>
-        <p id="resumen-vacio" class="muted">Nada seleccionado.</p>
-        <p class="total-line">
-          Total estimado: <strong id="total-delivery">0,00 €</strong>
-        </p>
-        <div class="actions">
-          <button
-            type="button"
-            class="btn btn-ghost-small"
-            id="btn-seguir-comprando"
-          >
-            Agregar más
-          </button>
-          <button type="button" id="btn-comprar" class="btn btn-primary">
-            <img
-              src="./assets/ico-pedido.svg"
-              width="18"
-              height="18"
-              alt=""
-              class="btn-ico-inline"
-            />
-            Pedir ahora
-          </button>
-        </div>
-      </section>
-
-      <!-- Confirmación -->
-      <section id="step-confirmacion" class="panel panel-center" hidden>
-        <h2>Pedido enviado</h2>
-        <p id="msg-confirm">En breve recibirá el tiempo estimado.</p>
-        <button type="button" class="btn btn-primary" id="btn-nuevo">
-          Nuevo pedido
-        </button>
-      </section>
-    </main>
-
-    <footer class="footer">
-      <small>RushEats — variante B (A/B)</small>
-    </footer>
-
-    <script src="./script.js"></script>
-  </body>
+</body>
 </html>
