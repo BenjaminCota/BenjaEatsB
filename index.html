@@ -7,9 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "w2ljtxjoqx");
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
     :root {
       --bg:        #F7F4EF;
       --card:      #FFFFFF;
@@ -30,7 +37,7 @@
       --sh-lg: 0 8px 32px rgba(0,0,0,.14);
       font-size: 16px;
     }
- 
+
     html { scroll-behavior: smooth; }
     body {
       font-family: 'DM Sans', sans-serif;
@@ -44,7 +51,7 @@
     img { display: block; }
     button { font-family: 'DM Sans', sans-serif; cursor: pointer; }
     ul { list-style: none; }
- 
+
     /* ── HEADER ── */
     .header {
       position: sticky; top: 0; z-index: 100;
@@ -68,7 +75,7 @@
       font-size: 1.25rem; font-weight: 800;
       color: var(--text); letter-spacing: -.03em;
     }
- 
+
     .cart-pill {
       display: flex; align-items: center; gap: .4rem;
       background: var(--accent); color: #fff;
@@ -96,7 +103,7 @@
       50%  { transform: scale(1.4); }
       100% { transform: scale(1); }
     }
- 
+
     /* ── STEPS ── */
     .steps-bar {
       max-width: 640px; margin: 0 auto;
@@ -131,7 +138,7 @@
       transition: transform .4s ease;
     }
     .step-conn.done .step-conn-fill { transform: scaleX(1); }
- 
+
     /* ── MAIN ── */
     .main {
       flex: 1; max-width: 640px; margin: 0 auto; width: 100%;
@@ -149,7 +156,7 @@
       letter-spacing: -.03em; margin-bottom: .25rem;
     }
     .section-sub { font-size: .875rem; color: var(--text-2); margin-bottom: 1.25rem; }
- 
+
     /* ── CHIPS ── */
     .filter-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
     .chip {
@@ -160,7 +167,7 @@
     }
     .chip:hover { border-color: var(--accent); color: var(--accent); }
     .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
- 
+
     /* ── GRID RESTAURANTES ── */
     .grid-rest {
       display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
@@ -190,7 +197,7 @@
       font-size: .72rem; color: var(--text-2);
       margin-top: .3rem; display: flex; align-items: center; gap: .2rem;
     }
- 
+
     /* ── MENÚ ── */
     .back-btn {
       display: inline-flex; align-items: center; gap: .35rem;
@@ -230,7 +237,7 @@
     .qty-btn.add { background: var(--accent); border-color: var(--accent); color: #fff; }
     .qty-btn:hover { filter: brightness(.9); }
     .qty-num { font-size: .9rem; font-weight: 700; min-width: 20px; text-align: center; }
- 
+
     /* ── CART DRAWER ── */
     .cart-overlay {
       position: fixed; inset: 0;
@@ -284,7 +291,7 @@
     .cart-total-amt {
       font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
     }
- 
+
     /* ── CHECKOUT ── */
     .form-section { display: flex; flex-direction: column; gap: 1rem; }
     .field-group { display: flex; flex-direction: column; gap: .35rem; }
@@ -313,7 +320,7 @@
     }
     .pay-opt:hover { border-color: var(--accent); color: var(--accent); }
     .pay-opt.active { border-color: var(--accent); background: var(--accent-lt); color: var(--accent); font-weight: 600; }
- 
+
     .osm {
       background: var(--surface); border-radius: var(--r-md);
       padding: 1rem; margin-bottom: 1.25rem;
@@ -329,7 +336,7 @@
       border-top: 1px solid var(--border);
       padding-top: .65rem; margin-top: .5rem;
     }
- 
+
     /* ── CONFIRMACIÓN ── */
     .confirm-wrap { text-align: center; padding: 2.5rem 1rem; }
     .confirm-ico {
@@ -352,7 +359,7 @@
       border-radius: 999px; padding: .45rem 1rem;
       font-size: .85rem; font-weight: 600; margin-bottom: 1.5rem;
     }
- 
+
     /* ── BUTTONS ── */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
@@ -375,7 +382,7 @@
       padding: .65rem 1rem; font-size: .85rem; border-radius: var(--r-md);
     }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
- 
+
     .footer {
       text-align: center; padding: 1rem;
       font-size: .72rem; color: var(--text-3);
@@ -389,7 +396,7 @@
   </style>
 </head>
 <body>
- 
+
 <header class="header">
   <div class="header-inner">
     <div class="brand">
@@ -418,9 +425,9 @@
     <div class="step-item" data-step="3"><div class="step-dot">3</div><span>Confirmar</span></div>
   </div>
 </header>
- 
+
 <main class="main">
- 
+
   <!-- PASO 1 -->
   <section id="step-rest" class="panel active">
     <h2 class="section-title">¿Qué se te antoja?</h2>
@@ -433,7 +440,7 @@
     </div>
     <ul class="grid-rest" id="lista-rest"></ul>
   </section>
- 
+
   <!-- PASO 2 -->
   <section id="step-menu" class="panel" hidden>
     <button class="back-btn" id="btn-volver-rest">
@@ -443,7 +450,7 @@
     <h2 class="menu-title" id="titulo-rest">Menú</h2>
     <ul class="menu-list" id="lista-platos"></ul>
   </section>
- 
+
   <!-- PASO 3 -->
   <section id="step-checkout" class="panel" hidden>
     <button class="back-btn" id="btn-volver-menu">
@@ -451,13 +458,13 @@
       Volver al menú
     </button>
     <h2 class="section-title">Confirmá tu pedido</h2>
- 
+
     <div class="osm" id="osm-wrap">
       <p class="osm-ttl">Tu pedido</p>
       <ul id="osm-lines"></ul>
       <div class="osm-total"><span>Total</span><span id="osm-total">$0,00</span></div>
     </div>
- 
+
     <div class="form-section">
       <div class="field-group">
         <label class="field-label" for="f-nombre">Nombre y apellido</label>
@@ -502,7 +509,7 @@
       </button>
     </div>
   </section>
- 
+
   <!-- CONFIRMACIÓN -->
   <section id="step-conf" class="panel" hidden>
     <div class="confirm-wrap">
@@ -521,9 +528,9 @@
       </button>
     </div>
   </section>
- 
+
 </main>
- 
+
 <!-- CARRITO DRAWER -->
 <div class="cart-overlay" id="cart-overlay"></div>
 <div class="cart-drawer" id="cart-drawer" role="dialog" aria-label="Carrito" aria-modal="true">
@@ -546,13 +553,13 @@
     </button>
   </div>
 </div>
- 
+
 <footer class="footer">BenjaEats · Prototipo mejorado UX</footer>
- 
+
 <script>
 (function(){
   'use strict';
- 
+
   var RESTS = [
     {id:'r1',nombre:'Pizzería Napoli',   cat:'pizza',        emoji:'🍕', tiempo:'25-35 min'},
     {id:'r2',nombre:'Sushi Roll',        cat:'asiatica',     emoji:'🍣', tiempo:'30-45 min'},
@@ -569,9 +576,9 @@
     r4:[{id:'m7',nombre:'Calzone',          precio:9.0, emoji:'🥐'},
         {id:'m8',nombre:'Prosciutto',       precio:11.5,emoji:'🍕'}]
   };
- 
+
   var restActual = null, pedido = [], pagoActual = 'efectivo';
- 
+
   // DOM
   var sRest=id('step-rest'), sMenu=id('step-menu'), sCheck=id('step-checkout'), sConf=id('step-conf');
   var listRest=id('lista-rest'), listPlatos=id('lista-platos'), titRest=id('titulo-rest');
@@ -580,14 +587,14 @@
   var pillTotal=id('pill-total'), pillCount=id('pill-count'), pillBtn=id('btn-abrir-carrito');
   var btnIrCk=id('btn-ir-checkout');
   var osmLines=id('osm-lines'), osmTotal=id('osm-total'), msgConf=id('msg-confirm');
- 
+
   function id(x){return document.getElementById(x);}
   function fmt(n){return '$'+Number(n).toFixed(2).replace('.',',');}
   function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
   function total(){return pedido.reduce(function(s,l){return s+l.precio*l.qty;},0);}
   function items(){return pedido.reduce(function(s,l){return s+l.qty;},0);}
   function find(pid){for(var i=0;i<pedido.length;i++)if(pedido[i].id===pid)return pedido[i];return null;}
- 
+
   // Steps
   function setStep(n){
     document.querySelectorAll('[data-step]').forEach(function(el){
@@ -598,7 +605,7 @@
       el.classList.toggle('done',+el.getAttribute('data-conn')<n);
     });
   }
- 
+
   function show(panel){
     [sRest,sMenu,sCheck,sConf].forEach(function(p){
       var on=p===panel; p.classList.toggle('active',on); p.hidden=!on;
@@ -608,7 +615,7 @@
     if(panel===sCheck||panel===sConf) setStep(3);
     window.scrollTo({top:0,behavior:'smooth'});
   }
- 
+
   // Pill
   function refreshPill(){
     var c=items(), t=total();
@@ -619,7 +626,7 @@
     void pillCount.offsetWidth;
     if(c>0) pillCount.classList.add('bump');
   }
- 
+
   // Restaurantes
   id('filter-chips').addEventListener('click',function(e){
     var chip=e.target.closest('[data-cat]'); if(!chip)return;
@@ -627,7 +634,7 @@
     chip.classList.add('active');
     renderRests(chip.getAttribute('data-cat'));
   });
- 
+
   function renderRests(cat){
     listRest.innerHTML='';
     RESTS.forEach(function(r){
@@ -645,12 +652,12 @@
       li.appendChild(btn); listRest.appendChild(li);
     });
   }
- 
+
   listRest.addEventListener('click',function(e){
     var b=e.target.closest('[data-rest]'); if(!b)return;
     abrirMenu(b.getAttribute('data-rest'));
   });
- 
+
   // Menú
   function qtyCtrlHTML(pl){
     var qty=find(pl.id)?find(pl.id).qty:0;
@@ -659,7 +666,7 @@
       '<button type="button" class="qty-btn add" data-add="'+pl.id+'" data-n="'+esc(pl.nombre)+'" data-p="'+pl.precio+'" data-e="'+pl.emoji+'" aria-label="Agregar">+</button>'+
     '</div>';
   }
- 
+
   function abrirMenu(rid){
     restActual=rid;
     var r=RESTS.find(function(x){return x.id===rid;});
@@ -675,7 +682,7 @@
     });
     show(sMenu);
   }
- 
+
   function refreshMenuQtys(){
     if(!restActual)return;
     (MENU[restActual]||[]).forEach(function(pl){
@@ -683,7 +690,7 @@
       ctrl.outerHTML=qtyCtrlHTML(pl);
     });
   }
- 
+
   listPlatos.addEventListener('click',function(e){
     var ab=e.target.closest('[data-add]');
     if(ab){
@@ -699,7 +706,7 @@
       refreshMenuQtys(); refreshPill(); renderCart();
     }
   });
- 
+
   // Cart drawer
   function renderCart(){
     cartLines.innerHTML='';
@@ -718,26 +725,26 @@
     });
     cartTotal.textContent=fmt(total());
   }
- 
+
   cartLines.addEventListener('click',function(e){
     var a=e.target.closest('[data-cad]'), r=e.target.closest('[data-crm]');
     if(a){var l=find(a.getAttribute('data-cad'));if(l)l.qty+=1;}
     if(r){var id2=r.getAttribute('data-crm'),l2=find(id2);if(l2){l2.qty-=1;if(l2.qty<=0)pedido=pedido.filter(function(x){return x.id!==id2;});}}
     renderCart(); refreshPill(); refreshMenuQtys();
   });
- 
+
   function openCart(){renderCart();overlay.classList.add('open');drawer.classList.add('open');document.body.style.overflow='hidden';}
   function closeCart(){overlay.classList.remove('open');drawer.classList.remove('open');document.body.style.overflow='';}
- 
+
   pillBtn.addEventListener('click',openCart);
   id('btn-cerrar-carrito').addEventListener('click',closeCart);
   overlay.addEventListener('click',closeCart);
- 
+
   btnIrCk.addEventListener('click',function(){
     if(!pedido.length)return;
     closeCart(); renderCheckout(); show(sCheck);
   });
- 
+
   // Checkout
   function renderCheckout(){
     osmLines.innerHTML='';
@@ -748,16 +755,16 @@
     });
     osmTotal.textContent=fmt(total());
   }
- 
+
   document.querySelector('.pay-opts').addEventListener('click',function(e){
     var b=e.target.closest('[data-pay]'); if(!b)return;
     pagoActual=b.getAttribute('data-pay');
     document.querySelectorAll('[data-pay]').forEach(function(x){x.classList.toggle('active',x===b);});
   });
- 
+
   id('btn-volver-rest').addEventListener('click',function(){show(sRest);});
   id('btn-volver-menu').addEventListener('click',function(){restActual?abrirMenu(restActual):show(sRest);});
- 
+
   id('btn-comprar').addEventListener('click',function(){
     if(!pedido.length){alert('Agregá al menos un plato.');return;}
     var nombre=id('f-nombre').value.trim(), dir=id('f-dir').value.trim();
@@ -766,13 +773,13 @@
     msgConf.textContent='¡Gracias, '+nombre+'! Tu pedido en '+rn+' por '+fmt(total())+' está en camino.';
     pedido=[]; refreshPill(); show(sConf);
   });
- 
+
   id('btn-nuevo').addEventListener('click',function(){
     restActual=null;
     ['f-nombre','f-tel','f-email','f-dir','f-piso','f-nota'].forEach(function(x){id(x).value='';});
     show(sRest);
   });
- 
+
   // Init
   renderRests('todas');
   refreshPill();
