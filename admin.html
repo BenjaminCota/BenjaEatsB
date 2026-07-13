@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logs de seguridad</title>
+<style>
+  /* Visor de logs — versión JS vanilla del componente LogsViewer (React) del
+     módulo original. Todo autocontenido: sin frameworks ni dependencias. */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: #f1f5f9; color: #0f172a; padding: 24px;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  h1 { font-size: 28px; }
+  .sub { color: #475569; margin: 8px 0 24px; font-size: 14px; }
+
+  /* --- puerta de acceso (contraseña) --- */
+  #gate { max-width: 380px; margin: 10vh auto 0; background: #fff; border: 1px solid #e2e8f0;
+          border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  #gate h1 { font-size: 20px; margin-bottom: 4px; }
+  #gate p { color: #64748b; font-size: 13px; margin-bottom: 16px; }
+  #gate input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px;
+                font-size: 14px; margin-bottom: 12px; }
+  #gate input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
+  #gate button { width: 100%; background: #2563eb; color: #fff; border: none; border-radius: 8px;
+                 padding: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  #gate button:hover { background: #1d4ed8; }
+  #gate-error { color: #b91c1c; font-size: 13px; margin-top: 10px; display: none; }
+
+  /* --- tarjetas de resumen --- */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+           gap: 16px; margin-bottom: 24px; }
+  .stat { border: 1px solid; border-radius: 12px; padding: 16px; }
+  .stat p:first-child { font-size: 13px; opacity: .8; }
+  .stat p:last-child { font-size: 26px; font-weight: 700; }
+  .stat.slate  { background: #fff;    border-color: #e2e8f0; color: #0f172a; }
+  .stat.green  { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+  .stat.red    { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+  .stat.purple { background: #faf5ff; border-color: #e9d5ff; color: #6b21a8; }
+  .stat.amber  { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+
+  /* --- barra de herramientas --- */
+  .toolbar { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;
+             margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+  .toolbar-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .toolbar input[type=text] { flex: 1; min-width: 220px; border: 1px solid #cbd5e1;
+    border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+  .toolbar input[type=text]:focus { outline: none; border-color: #2563eb; }
+  .toolbar select { border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 14px; background: #fff; }
+  .btn { border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; padding: 8px 12px;
+         font-size: 13px; font-weight: 500; color: #334155; cursor: pointer; }
+  .btn:hover { background: #f8fafc; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn.danger { border-color: #fca5a5; background: #fef2f2; color: #b91c1c; }
+  .btn.danger:hover { background: #fee2e2; }
+  .auto-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #475569; cursor: pointer; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { border: none; border-radius: 999px; padding: 5px 12px; font-size: 12px;
+          font-weight: 500; cursor: pointer; background: #f1f5f9; color: #475569; }
+  .chip:hover { opacity: .8; }
+  .chip.active { background: #2563eb; color: #fff; }
+
+  /* --- secciones con tabla --- */
+  .section { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+             margin-bottom: 24px; box-shadow: 0 1px 2px rgba(0,0,0,.04); overflow: hidden; }
+  .section-head { display: flex; justify-content: space-between; align-items: center;
+                  border-bottom: 1px solid #e2e8f0; padding: 12px 16px; }
+  .section-head h2 { font-size: 14px; font-weight: 600; }
+  .pill { border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 500;
+          background: #f1f5f9; color: #475569; }
+  .pill.blue { background: #dbeafe; color: #1d4ed8; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+  thead { background: #f8fafc; }
+  th { padding: 8px 12px; font-weight: 500; color: #64748b; white-space: nowrap; }
+  td { padding: 8px 12px; border-top: 1px solid #f1f5f9; vertical-align: top; }
+  tr:hover td { background: #f8fafc; }
+  tr.attack td { background: rgba(254, 226, 226, .5); }
+  .mono { font-family: ui-monospace, Consolas, monospace; }
+  .muted { color: #64748b; }
+  .nowrap { white-space: nowrap; }
+  .truncate { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .empty { text-align: center; color: #64748b; font-size: 13px; padding: 32px 16px; }
+  .empty code { background: #f1f5f9; border-radius: 4px; padding: 1px 5px; }
+
+  /* --- badges de categoría / severidad / estado --- */
+  .badge { display: inline-block; border-radius: 999px; padding: 2px 8px; font-weight: 500; }
+  .cat-VISIT  { background: #dcfce7; color: #15803d; }
+  .cat-ATTACK { background: #fecaca; color: #991b1b; }
+  .cat-AUTHZ  { background: #f3e8ff; color: #7e22ce; }
+  .cat-ADMIN  { background: #e0e7ff; color: #4338ca; }
+  .cat-ERROR  { background: #fee2e2; color: #b91c1c; }
+  .sev-INFO    { background: #dbeafe; color: #1d4ed8; }
+  .sev-WARNING { background: #fef3c7; color: #b45309; }
+  .sev-ERROR   { background: #fee2e2; color: #b91c1c; }
+  .attack-type { display: inline-block; background: #fee2e2; color: #b91c1c; border-radius: 4px;
+                 padding: 1px 6px; font-size: 10px; font-weight: 500; margin: 2px 4px 0 0; }
+  .state-bad { background: #fecaca; color: #991b1b; }
+  .state-ok  { background: #dcfce7; color: #15803d; }
+</style>
+</head>
+<body>
+
+<!-- Puerta de acceso: pide la contraseña y la valida contra la API. -->
+<div id="gate">
+  <h1>🔐 Panel de logs</h1>
+  <p>Introduce la contraseña de administración para ver los logs de seguridad.</p>
+  <form id="gate-form">
+    <input type="password" id="gate-pass" placeholder="Contraseña" autocomplete="current-password" autofocus>
+    <button type="submit">Entrar</button>
+  </form>
+  <p id="gate-error">Contraseña incorrecta.</p>
+</div>
+
+<!-- Panel principal (oculto hasta autenticarse) -->
+<div class="wrap" id="panel" hidden>
+  <h1>Logs de seguridad</h1>
+  <p class="sub">
+    Registro de eventos del sitio (guardado en archivo local, solo para práctica).
+    Usa los filtros, el buscador y el auto-refresh. Pasa el cursor sobre el
+    navegador para ver el user-agent completo.
+  </p>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="toolbar">
+    <div class="toolbar-row">
+      <input type="text" id="search" placeholder="Buscar IP, recurso, mensaje...">
+      <select id="severity">
+        <option value="ALL">Toda severidad</option>
+        <option value="INFO">INFO</option>
+        <option value="WARNING">WARNING</option>
+        <option value="ERROR">ERROR</option>
+      </select>
+      <button class="btn" id="refresh">Actualizar</button>
+      <label class="auto-label"><input type="checkbox" id="auto" checked> Auto (4s)</label>
+      <button class="btn" id="export-json">Exportar JSON</button>
+      <button class="btn" id="export-csv">Exportar CSV</button>
+      <button class="btn danger" id="clear">Limpiar logs</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Actividad por IP</h2>
+      <span class="pill" id="ip-count">0 IP distintas</span>
+    </div>
+    <div id="ip-table"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2>Eventos registrados</h2>
+      <span class="pill blue" id="event-count">0 de 0</span>
+    </div>
+    <div id="events-table"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var API = "/api/admin/logs";
+  var CATEGORIES = ["VISIT", "ATTACK", "AUTHZ", "ADMIN", "ERROR"];
+
+  // --- estado (equivalente a los useState del componente React original) ---
+  var logs = [];
+  var search = "";
+  var category = "ALL";
+  var severity = "ALL";
+  var timer = null;
+
+  // IMPORTANTE: los logs contienen payloads de atacantes (<script>, etc.).
+  // Todo lo que se pinta con innerHTML pasa por esta función para evitar que
+  // el propio panel sea vulnerable a XSS almacenado.
+  function esc(value) {
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function adminKey() { return sessionStorage.getItem("adminKey") || ""; }
+
+  // --- pide los logs a la API; 401 = clave inválida → vuelve a la puerta ---
+  function fetchLogs() {
+    return fetch(API, { headers: { "x-admin-key": adminKey() }, cache: "no-store" })
+      .then(function (res) {
+        if (res.status === 401) { logout(); throw new Error("unauthorized"); }
+        return res.json();
+      })
+      .then(function (data) {
+        logs = data.logs || [];
+        render();
+      });
+  }
+
+  function login(pass) {
+    sessionStorage.setItem("adminKey", pass);
+    fetchLogs().then(function () {
+      document.getElementById("gate").hidden = true;
+      document.getElementById("panel").hidden = false;
+      startAutoRefresh();
+    }).catch(function () {
+      document.getElementById("gate-error").style.display = "block";
+    });
+  }
+
+  function logout() {
+    sessionStorage.removeItem("adminKey");
+    stopAutoRefresh();
+    document.getElementById("panel").hidden = true;
+    document.getElementById("gate").hidden = false;
+  }
+
+  // --- auto-refresh cada 4 segundos (igual que el original) ---
+  function startAutoRefresh() {
+    stopAutoRefresh();
+    if (document.getElementById("auto").checked) {
+      timer = setInterval(function () {
+        fetchLogs().catch(function () {}); // si falla, dejamos los logs actuales
+      }, 4000);
+    }
+  }
+  function stopAutoRefresh() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  // --- filtros: búsqueda + categoría + severidad ---
+  function getFiltered() {
+    var term = search.trim().toLowerCase();
+    return logs.filter(function (log) {
+      if (category !== "ALL" && log.category !== category) return false;
+      if (severity !== "ALL" && log.severity !== severity) return false;
+      if (!term) return true;
+      var haystack = [log.ip, log.resource, log.message, log.client]
+        .join(" ").toLowerCase();
+      return haystack.indexOf(term) !== -1;
+    });
+  }
+
+  // --- render completo (estadísticas, chips, tablas) ---
+  function render() {
+    var filtered = getFiltered();
+
+    // Tarjetas de resumen.
+    var stats = [
+      { label: "Total", value: logs.length, tone: "slate" },
+      { label: "Visitas", value: count("category", "VISIT"), tone: "green" },
+      { label: "Ataques", value: count("category", "ATTACK"), tone: "red" },
+      { label: "Denegados", value: count("category", "AUTHZ"), tone: "purple" },
+      { label: "Errores", value: count("severity", "ERROR"), tone: "amber" },
+    ];
+    document.getElementById("stats").innerHTML = stats.map(function (s) {
+      return '<div class="stat ' + s.tone + '"><p>' + s.label + '</p><p>' + s.value + '</p></div>';
+    }).join("");
+
+    // Chips de categoría.
+    var chips = ['<button class="chip' + (category === "ALL" ? " active" : "") + '" data-cat="ALL">Todas</button>'];
+    CATEGORIES.forEach(function (c) {
+      chips.push('<button class="chip ' + (category === c ? "active" : "cat-" + c) + '" data-cat="' + c + '">' + c + '</button>');
+    });
+    document.getElementById("chips").innerHTML = chips.join("");
+
+    renderIpTable();
+    renderEventsTable(filtered);
+  }
+
+  function count(field, value) {
+    return logs.filter(function (l) { return l[field] === value; }).length;
+  }
+
+  // --- actividad agrupada por IP (misma lógica que el original) ---
+  function renderIpTable() {
+    var map = new Map();
+    logs.forEach(function (log) {
+      var key = log.ip || "desconocida";
+      var row = map.get(key);
+      if (!row) {
+        row = { ip: key, total: 0, ataques: 0, denegados: 0, recursos: new Set(), ultima: log.timestamp };
+        map.set(key, row);
+      }
+      row.total += 1;
+      if (log.category === "ATTACK") row.ataques += 1;
+      if (log.category === "AUTHZ") row.denegados += 1;
+      row.recursos.add(String(log.resource || "").split("?")[0]);
+      if (log.timestamp > row.ultima) row.ultima = log.timestamp;
+    });
+    // Primero las IP con más ataques, luego las más activas.
+    var rows = Array.from(map.values()).sort(function (a, b) {
+      return b.ataques - a.ataques || b.total - a.total;
+    });
+
+    document.getElementById("ip-count").textContent = rows.length + " IP distintas";
+
+    if (rows.length === 0) {
+      document.getElementById("ip-table").innerHTML =
+        '<p class="empty">Aún no hay actividad. Consejo: prueba visitar ' +
+        '<code>/?simip=8.8.8.8</code> para simular otra IP.</p>';
+      return;
+    }
+
+    var html = '<div class="table-scroll"><table><thead><tr>' +
+      "<th>IP</th><th>Eventos</th><th>Ataques</th><th>Denegados</th>" +
+      "<th>Rutas distintas</th><th>Última actividad</th><th>Estado</th>" +
+      "</tr></thead><tbody>";
+    rows.forEach(function (r) {
+      var bad = r.ataques > 0;
+      html += '<tr class="' + (bad ? "attack" : "") + '">' +
+        '<td class="mono"><strong>' + esc(r.ip) + "</strong></td>" +
+        "<td>" + r.total + "</td>" +
+        '<td style="color:#b91c1c;font-weight:600">' + (r.ataques || "-") + "</td>" +
+        '<td style="color:#7e22ce">' + (r.denegados || "-") + "</td>" +
+        "<td>" + r.recursos.size + "</td>" +
+        '<td class="nowrap muted">' + new Date(r.ultima).toLocaleString() + "</td>" +
+        '<td><span class="badge ' + (bad ? "state-bad" : "state-ok") + '">' +
+        (bad ? "Sospechosa" : "Normal") + "</span></td></tr>";
+    });
+    document.getElementById("ip-table").innerHTML = html + "</tbody></table></div>";
+  }
+
+  // --- tabla principal de eventos ---
+  function renderEventsTable(filtered) {
+    document.getElementById("event-count").textContent = filtered.length + " de " + logs.length;
+
+    if (filtered.length === 0) {
+      document.getElementById("events-table").innerHTML =
+        '<p class="empty">No hay eventos que coincidan con los filtros. ' +
+        "Navega por el sitio o intenta un ataque de prueba para generar logs.</p>";
+      return;
+    }
+
+    var html = '<div class="table-scroll"><table><thead><tr>' +
+      "<th>Fecha</th><th>Categoría</th><th>Severidad</th><th>IP</th><th>Navegador</th>" +
+      "<th>Método</th><th>Recurso</th><th>Código</th><th>Mensaje</th>" +
+      "</tr></thead><tbody>";
+    filtered.forEach(function (log) {
+      var attackChips = "";
+      if (log.attackTypes && log.attackTypes.length) {
+        attackChips = "<br>" + log.attackTypes.map(function (t) {
+          return '<span class="attack-type">' + esc(t) + "</span>";
+        }).join("");
+      }
+      html += '<tr class="' + (log.category === "ATTACK" ? "attack" : "") + '">' +
+        '<td class="nowrap muted">' + new Date(log.timestamp).toLocaleString() + "</td>" +
+        '<td><span class="badge cat-' + esc(log.category) + '">' + esc(log.category) + "</span></td>" +
+        '<td><span class="badge sev-' + esc(log.severity) + '">' + esc(log.severity) + "</span></td>" +
+        '<td class="nowrap mono">' + esc(log.ip) + "</td>" +
+        '<td class="nowrap muted" title="' + esc(log.userAgent) + '">' + esc(log.client || "-") + "</td>" +
+        '<td class="mono muted">' + esc(log.method) + "</td>" +
+        '<td class="mono truncate" title="' + esc(log.resource) + '">' + esc(log.resource) + "</td>" +
+        "<td>" + esc(log.statusCode) + "</td>" +
+        "<td>" + esc(log.message) + attackChips + "</td></tr>";
+    });
+    document.getElementById("events-table").innerHTML = html + "</tbody></table></div>";
+  }
+
+  // --- exportar JSON / CSV de los eventos filtrados (igual que el original) ---
+  function exportLogs(format) {
+    var filtered = getFiltered();
+    var content, type, ext;
+    if (format === "json") {
+      content = JSON.stringify(filtered, null, 2);
+      type = "application/json"; ext = "json";
+    } else {
+      var headers = ["timestamp", "category", "severity", "ip", "client",
+                     "method", "resource", "statusCode", "message"];
+      var rows = filtered.map(function (l) {
+        return headers.map(function (h) {
+          return '"' + String(l[h] == null ? "" : l[h]).replace(/"/g, '""') + '"';
+        }).join(",");
+      });
+      content = [headers.join(",")].concat(rows).join("\n");
+      type = "text/csv"; ext = "csv";
+    }
+    var blob = new Blob([content], { type: type });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "security-logs." + ext;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // --- borrar todos los logs (con confirmación; la acción queda registrada) ---
+  function clearLogs() {
+    if (!confirm("¿Borrar TODOS los logs? Esta acción no se puede deshacer.")) return;
+    fetch(API, { method: "DELETE", headers: { "x-admin-key": adminKey() } })
+      .then(function () { return fetchLogs(); })
+      .catch(function () {});
+  }
+
+  // --- eventos de la interfaz ---
+  document.getElementById("gate-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    document.getElementById("gate-error").style.display = "none";
+    login(document.getElementById("gate-pass").value);
+  });
+  document.getElementById("search").addEventListener("input", function (e) {
+    search = e.target.value; render();
+  });
+  document.getElementById("severity").addEventListener("change", function (e) {
+    severity = e.target.value; render();
+  });
+  document.getElementById("chips").addEventListener("click", function (e) {
+    var cat = e.target.getAttribute("data-cat");
+    if (cat) { category = cat; render(); }
+  });
+  document.getElementById("refresh").addEventListener("click", function () {
+    var btn = document.getElementById("refresh");
+    btn.disabled = true; btn.textContent = "Actualizando...";
+    fetchLogs().catch(function () {}).then(function () {
+      btn.disabled = false; btn.textContent = "Actualizar";
+    });
+  });
+  document.getElementById("auto").addEventListener("change", startAutoRefresh);
+  document.getElementById("export-json").addEventListener("click", function () { exportLogs("json"); });
+  document.getElementById("export-csv").addEventListener("click", function () { exportLogs("csv"); });
+  document.getElementById("clear").addEventListener("click", clearLogs);
+
+  // Si ya había una clave válida en esta pestaña, entra directo.
+  if (adminKey()) {
+    fetchLogs().then(function () {
+      document.getElementById("gate").hidden = true;
+      document.getElementById("panel").hidden = false;
+      startAutoRefresh();
+    }).catch(function () {});
+  }
+})();
+</script>
+</body>
+</html>
